@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+    <title>index</title>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('#backup_all').click(function(){
+                var socket=new WebSocket("ws://"+window.location.host+"/echo/");
+                socket.onopen=function(){
+                    console.log('WebSocket open');
+                    socket.send($('#backup_all').val());
+                };
+                socket.onmessage=function (e) {
+                    console.log('message:'+e.data);
+                    $('#messagecontainer').prepend('<p><pre>'+e.data+'</pre></p>');
+                    {#$('#messagecontainer').prepend('<hr />');#}
+                };
+                if (socket.readyState == WebSocket.OPEN) socket.onopen();
+                window.s = socket;
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <hr />
+    <button style="margin: 20px;height: 40px;background-color: #00ff00;" type="button" id="backup_all" value="backup_all">
+        打印日志
+    </button>
+    <h1 style="background-color: coral;color: midnightblue;">您查询的日志为：</h1>
+    <div id="messagecontainer" style="margin: 20px;"></div>
+</body>
+</html>
